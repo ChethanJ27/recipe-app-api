@@ -1,0 +1,60 @@
+version: '3'
+
+volumes:
+  mysql_data:
+
+
+services:
+#db
+  mysql:
+    hostname: mysql
+    image: mysql:5.7
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      - MYSQL_HOST=localhost
+      - MYSQL_PORT=3306
+      - MYSQL_ROOT_HOST=%
+      - MYSQL_DATABASE=recipe_db
+      - MYSQL_USER=dev
+      - MYSQL_PASSWORD=dev
+      - MYSQL_ROOT_PASSWORD=MysqlPassword@10
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./loyaltyengine/server/sql:/shared
+  
+  #nginx
+  nginx:
+    build: ./loyaltyengine/nginx
+    volumes:
+      - static-assets:/app/static_root
+      - site-packages:/usr/local/lib/python3.8.13/site-packages
+    depends_on:
+      - webserver
+    ports:
+      - "0.0.0.0:80:80"
+
+  # message broker
+  redis:
+    restart: always
+    image: redis:latest
+    expose:
+      - "6379"
+
+  # worker
+  celeryworker:
+    build: 
+      context: ./loyaltyengine/server
+      dockerfile: Dockerfile_develop
+      args:
+        - RECOMMENDATION_ENGINE=${RECOMMENDATION_ENGINE}
+    user: webserver
+    volumes:
+      - ./loyaltyengine/server:/app
+      - site-packages:/usr/local/lib/python3.8.13/site-packages
+    depends_on:
+      - redis
+      - mysql
+    env_file: .env
+    command: celery -A apps.tasks worker -l DEBUG
