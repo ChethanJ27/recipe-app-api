@@ -5,6 +5,17 @@ volumes:
 
 
 services:
+  app:
+    build:
+      context: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/app
+    command: >
+      sh -c "python manage.py runserver 0.0.0.0:8000"
+
+
 #db
   mysql:
     hostname: mysql
@@ -23,38 +34,3 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
       - ./loyaltyengine/server/sql:/shared
-  
-  #nginx
-  nginx:
-    build: ./loyaltyengine/nginx
-    volumes:
-      - static-assets:/app/static_root
-      - site-packages:/usr/local/lib/python3.8.13/site-packages
-    depends_on:
-      - webserver
-    ports:
-      - "0.0.0.0:80:80"
-
-  # message broker
-  redis:
-    restart: always
-    image: redis:latest
-    expose:
-      - "6379"
-
-  # worker
-  celeryworker:
-    build: 
-      context: ./loyaltyengine/server
-      dockerfile: Dockerfile_develop
-      args:
-        - RECOMMENDATION_ENGINE=${RECOMMENDATION_ENGINE}
-    user: webserver
-    volumes:
-      - ./loyaltyengine/server:/app
-      - site-packages:/usr/local/lib/python3.8.13/site-packages
-    depends_on:
-      - redis
-      - mysql
-    env_file: .env
-    command: celery -A apps.tasks worker -l DEBUG
