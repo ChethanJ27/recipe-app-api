@@ -30,11 +30,9 @@ services:
     environment:
       - MYSQL_HOST=localhost
       - MYSQL_PORT=3306
-      - MYSQL_ROOT_HOST=%
       - MYSQL_DATABASE=recipe_db
       - MYSQL_USER=dev
       - MYSQL_PASSWORD=dev
-      - MYSQL_ROOT_PASSWORD=MysqlPassword@10
     ports:
       - "3306:3306"
     volumes:
