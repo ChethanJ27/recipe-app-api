@@ -1,6 +1,6 @@
 from dataclasses import fields
 from django.contrib.auth import get_user_model,authenticate
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 
@@ -10,7 +10,7 @@ class UserSerializers(ModelSerializer):
     class Meta:
         model = get_user_model()
         fields = {'email', 'password', 'name'}
-        **kwargs = {'password':{ 'write_only':true, min_length:8 }}
+        # **kwargs = {'password':{ 'write_only':true, min_length:8 }}
 
     def create(self,validated_data):
         """create new user with encrypted password and return it"""
