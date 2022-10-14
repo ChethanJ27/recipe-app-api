@@ -3,18 +3,18 @@ from django.contrib.auth import get_user_model,authenticate
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
+from user.models import UserModel
 
-class UserSerializers(ModelSerializer):
+class UserSerializers(serializers.ModelSerializer):
     """serializer for user model"""
-
     class Meta:
-        model = get_user_model()
+        model = UserModel
         fields = {'email', 'password', 'name'}
-        # **kwargs = {'password':{ 'write_only':true, min_length:8 }}
+        extra_kwargs = {'password':{ 'write_only':'true', 'min_length':8 }}
 
     def create(self,validated_data):
         """create new user with encrypted password and return it"""
-        return get_user_model().objects.create_user(**validated_data)
+        return UserModel().objects.create_user(**validated_data)
 
 
 class AuthenticateSerializer(serializers.Serializer):
