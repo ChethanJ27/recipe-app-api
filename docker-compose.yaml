@@ -5,7 +5,7 @@ volumes:
 
 
 services:
-  app:
+  webserver:
     build:
       context: .
     ports:
@@ -37,3 +37,11 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+
+#nginx
+  nginx:
+    build: ./nginx/
+    depends_on:
+      - webserver
+    ports: 
+      - "0.0.0.0:80:80"

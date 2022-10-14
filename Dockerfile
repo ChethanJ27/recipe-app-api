@@ -17,3 +17,5 @@ COPY ./app /app
 
 RUN adduser user
 USER user
+
+EXPOSE 8000
