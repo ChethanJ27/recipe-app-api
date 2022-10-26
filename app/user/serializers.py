@@ -9,12 +9,14 @@ class UserSerializers(serializers.ModelSerializer):
     """serializer for user model"""
     class Meta:
         model = UserModel
-        fields = {'email', 'password', 'name'}
+        fields = ('id','name','email','password')
         extra_kwargs = {'password':{ 'write_only':'true', 'min_length':8 }}
 
     def create(self,validated_data):
         """create new user with encrypted password and return it"""
-        return UserModel().objects.create_user(**validated_data)
+        print(validated_data)
+        print("validated")
+        return UserModel.objects.create_user(validated_data)
 
 
 class AuthenticateSerializer(serializers.Serializer):
@@ -23,7 +25,6 @@ class AuthenticateSerializer(serializers.Serializer):
     password = serializers.CharField(
         style = {'input_type':'password'}
     )
-
 
     def validate(self,attrs):
         """validate and authenticate user"""
