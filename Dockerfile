@@ -1,7 +1,11 @@
 FROM python:3.10.7-slim-buster
 
 ENV PYTHONUNBUFFERED 1
-# RUN apt-get install libmysqlclient-dev
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends build-essential \
+        python-dev \
+        default-libmysqlclient-dev
 
 
 COPY ./requirements.txt /requirements.txt
@@ -13,3 +17,5 @@ COPY ./app /app
 
 RUN adduser user
 USER user
+
+EXPOSE 8000

@@ -5,24 +5,7 @@ volumes:
 
 
 services:
-  app:
-    build:
-      context: .
-    ports:
-      - "8000:8000"
-    volumes:
-      - ./app:/app
-    command: >
-      sh -c "python manage.py runserver 0.0.0.0:8000"
-    environment:
-      - DB_HOST=mysql
-      - DB_NAME=recipe_db
-      - DB_USER=dev
-      - DB_PASS=dev
-    depends_on:
-      - mysql
-
-#db
+  #db
   mysql:
     hostname: mysql
     image: mysql:5.7
@@ -39,3 +22,31 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+
+  app:
+    build:
+      context: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/app
+    command: bash -c "python check_db.py --service-name mysql --ip mysql --port 3306 &&
+                      python manage.py migrate &&
+                      python manage.py runserver 0:8000"
+    environment:
+      - DB_HOST=mysql
+      - DB_NAME=recipe_db
+      - DB_USER=dev
+      - DB_PASS=dev
+    depends_on:
+      - mysql
+    expose:
+      - 8000
+
+# #nginx
+#   nginx:
+#     build: ./nginx/
+#     depends_on:
+#       - app
+#     ports: 
+#       - "0.0.0.0:80:80"
