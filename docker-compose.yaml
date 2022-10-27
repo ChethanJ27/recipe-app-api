@@ -1,8 +1,7 @@
-version: '3'
+version: "3"
 
 volumes:
   mysql_data:
-
 
 services:
   #db
@@ -23,16 +22,17 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
 
-  app:
+  backend:
     build:
       context: .
     ports:
       - "8000:8000"
     volumes:
       - ./app:/app
-    command: bash -c "python check_db.py --service-name mysql --ip mysql --port 3306 &&
-                      python manage.py migrate &&
-                      python manage.py runserver 0:8000"
+    command:
+      bash -c "python check_db.py --service-name mysql --ip mysql --port 3306 &&
+      python manage.py migrate &&
+      python manage.py runserver 0:8000"
     environment:
       - DB_HOST=mysql
       - DB_NAME=recipe_db
@@ -43,10 +43,11 @@ services:
     expose:
       - 8000
 
-# #nginx
-#   nginx:
-#     build: ./nginx/
-#     depends_on:
-#       - app
-#     ports: 
-#       - "0.0.0.0:80:80"
+  #nginx
+  proxy:
+    build: proxy
+    restart: always
+    ports:
+      - 80:80
+    depends_on: 
+      - backend
