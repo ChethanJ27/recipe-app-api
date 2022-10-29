@@ -1,4 +1,4 @@
-from django.rest_framework import viewsets
+from rest_framework import viewsets
 
 from recipe.serializers import TagSerializer,IngredientSerializer,RecipeSerializer
 from recipe.models import Tag,Ingredient,Recipe
