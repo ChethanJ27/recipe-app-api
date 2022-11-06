@@ -7,3 +7,7 @@ def get_tokens_for_user(user):
         'refresh': str(refresh),
         'access': str(refresh.access_token),
     }
+
+def add_token_to_blackList(refresh_token):
+    token = RefreshToken(refresh_token)
+    token.blacklist()

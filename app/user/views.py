@@ -3,7 +3,9 @@ from django.contrib.auth import authenticate, login, logout
 from rest_framework import generics,status
 from rest_framework.views import APIView
 from rest_framework.response import  Response
-from .utils import get_tokens_for_user
+from rest_framework.permissions import IsAuthenticated
+from .utils import get_tokens_for_user,add_token_to_blackList
+
 
 from user.serializers import UserSerializers
 # Create your views here.
@@ -27,3 +29,16 @@ class LoginUserView(APIView):
             auth_data = get_tokens_for_user(request.user)
             return Response({'msg': 'Login Success', **auth_data}, status=status.HTTP_200_OK)
         return Response({'msg': 'Invalid Credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+class LogoutUserView(APIView):
+    permission_classes = [IsAuthenticated,]
+
+    def post(self,request):
+        refresh_token = request.data['refresh_token']
+        try:
+            logout(request)
+            add_token_to_blackList(refresh_token)
+            return Response({'msg': 'Successfully Logged out'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response( status=status.HTTP_400_BAD_REQUEST )

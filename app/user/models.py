@@ -11,19 +11,19 @@ class UserManager(BaseUserManager):
         """
         if not email :
             raise('user must have a email')
-
         user = self.model(email)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, date_of_birth, password=None):
+    def create_superuser(self, email, name, password=None):
         """
         Creates and saves a superuser with the given email, date of
         birth and password.
         """
         user = self.create_user(
             email,
+            name,
         )
         user.set_password(password)
         user.is_admin = True
