@@ -50,7 +50,7 @@ while True:
             use_unicode=True,
             charset='utf8'
         )
-        print("{0} port is open! And clearbridge_core/models created in db -> paction_db_qa Bye!".format(service_name))
+        print("{0} port is open! ->  Bye!".format(service_name))
         break
     else:
         print("{0} port is not open! I'll check it soon!".format(service_name))
