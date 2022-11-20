@@ -50,18 +50,33 @@ class RecipeView(APIView):
     permission_classes = [IsAuthenticated, ]
 
     def post(self,request):
-        d = request.data
-        logging.warning(d)
-        data = json.loads(d.decode('utf-8'))
-        data.user = request.user
-        print("data"+json)
-        logging.warning("data"+data)
-        # model = Recipe(data)
-        # print("recipe model"+model)
-        # model.save()
-        dat = json.dumps(data)
-        return Response({"msg":dat},status=status.HTTP_200_OK)
+        data = request.data
+        data["user"] = request.user
+        logging.warning(data)
+        tags = request.data["tags"]
+        del data["tags"]
+        model = Recipe.objects.create(**data)
+        tag = RecipeView.get_or_create_tags(tags=tags,user=request.user)
+        logging.warning(len(tag))
+        for t in tag:
+            logging.warning(t)
+            model.tags.set(t)
+        logging.warning(model)
+        return Response({"msg":model.title},status=status.HTTP_200_OK)
 
+    def get_or_create_tags(tags,user):
+        newtags = []
+        for tag in tags:
+            val = Tag.objects.filter(name=tag)
+            if not val:
+                model = Tag(name=tag,user=user)
+                model.save()
+                val = Tag.objects.filter(name=tag)
+                newtags.append(val)
+            else:
+                newtags.append(val)
+        logging.debug(newtags)
+        return newtags
 
     def get(self,request):
         model = Recipe.objects.all()
