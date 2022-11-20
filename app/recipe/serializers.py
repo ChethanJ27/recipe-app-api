@@ -5,14 +5,13 @@ class TagSerializer(serializers.ModelSerializer):
     """ """
     class Meta:
         model = Tag
-        fields = ["name","user"]
-
+        exclude = ['user']
 
 class IngredientSerializer(serializers.ModelSerializer):
     """ """
     class Meta:
         model = Ingredient
-        fields = ["name","user"]
+        fields = ["name"]
 
 
 class RecipeSerializer(serializers.ModelSerializer):
@@ -20,4 +19,4 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
-        fields = ["user","title","description","calories","avgPrice","timeToCook","ingredients","tags"]
+        fields = ["title","description","calories","avg_price","time_to_cook"]
