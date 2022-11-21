@@ -1,4 +1,5 @@
-from rest_framework import viewsets, generics,status
+from recipe.utils import get_or_create_tags,get_or_create_ingredients
+from rest_framework import generics,status
 from rest_framework.views import APIView
 from rest_framework.response import  Response
 from rest_framework.permissions import IsAuthenticated
@@ -52,31 +53,21 @@ class RecipeView(APIView):
     def post(self,request):
         data = request.data
         data["user"] = request.user
-        logging.warning(data)
         tags = request.data["tags"]
+        ingredients = request.data["ingredients"]
         del data["tags"]
+        del data["ingredients"]
         model = Recipe.objects.create(**data)
-        tag = RecipeView.get_or_create_tags(tags=tags,user=request.user)
-        logging.warning(len(tag))
-        for t in tag:
-            logging.warning(t)
-            model.tags.set(t)
-        logging.warning(model)
-        return Response({"msg":model.title},status=status.HTTP_200_OK)
 
-    def get_or_create_tags(tags,user):
-        newtags = []
-        for tag in tags:
-            val = Tag.objects.filter(name=tag)
-            if not val:
-                model = Tag(name=tag,user=user)
-                model.save()
-                val = Tag.objects.filter(name=tag)
-                newtags.append(val)
-            else:
-                newtags.append(val)
-        logging.debug(newtags)
-        return newtags
+        tag = get_or_create_tags(tags=tags,user=request.user)
+        for t in tag:
+            model.tags.set(t)
+
+        ingredient = get_or_create_ingredients(ingredients=ingredients,user=request.user)
+        for t in ingredient:
+            model.ingredients.set(t)
+
+        return Response({"msg":model.title},status=status.HTTP_200_OK)
 
     def get(self,request):
         model = Recipe.objects.all()
