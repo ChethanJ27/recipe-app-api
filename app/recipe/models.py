@@ -4,7 +4,7 @@ from user.models import UserModel
 # Create your models here.
 
 class Tag(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255,unique=True)
     user = models.ForeignKey(UserModel,on_delete=models.CASCADE)
 
     def __str__(self):
@@ -12,7 +12,7 @@ class Tag(models.Model):
 
 
 class Ingredient(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255,unique=True)
     user = models.ForeignKey(UserModel,on_delete=models.CASCADE)
 
     def __str__(self):
@@ -27,4 +27,7 @@ class Recipe(models.Model):
     time_to_cook = models.IntegerField()
     ingredients = models.ManyToManyField('Ingredient')
     tags = models.ManyToManyField('Tag')
+
+    def __str__(self):
+        return self.title
 
