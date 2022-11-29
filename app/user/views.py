@@ -12,8 +12,16 @@ from user.serializers import UserSerializers
 # Create your views here.
 class CreateUserView(generics.CreateAPIView):
     """create a user in the system"""
-    query_set = UserModel.objects.all()
     serializer_class = UserSerializers
+
+    def get_queryset(self):
+        return UserModel.objects.create_user(**validated_data)
+
+    def create(self, request,*args,**kwargs):
+        result = super(CreateUserView, self).create(request, *args, **kwargs)
+        create_task.delay(1)
+        return result
+    
 
 
 class LoginUserView(APIView):
@@ -27,7 +35,6 @@ class LoginUserView(APIView):
         if user is not None:
             login(request, user)
             auth_data = get_tokens_for_user(request.user)
-            create_task.delay(1)
             return Response({'msg': 'Login Success', **auth_data}, status=status.HTTP_200_OK)
         return Response({'msg': 'Invalid Credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 

@@ -1,5 +1,4 @@
 from __future__ import absolute_import, unicode_literals
-from app.celery import app
 import time
 from celery import shared_task
 
@@ -13,4 +12,10 @@ def debug_task(self):
 @shared_task
 def create_task(task_type):
     time.sleep(int(task_type) * 5)
+    return True
+
+@shared_task
+def send_verification_mail():
+    """sending verification email logic will come here"""
+    time.sleep(10)
     return True

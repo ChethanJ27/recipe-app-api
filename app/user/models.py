@@ -1,6 +1,7 @@
 
 from django.db import models
 from django.contrib.auth.models import BaseUserManager,AbstractBaseUser
+from .tasks import create_task
 
 class UserManager(BaseUserManager):
     """ """
@@ -14,6 +15,7 @@ class UserManager(BaseUserManager):
         user = self.model(email)
         user.set_password(password)
         user.save(using=self._db)
+        create_task.delay(1)
         return user
 
     def create_superuser(self, email, name, password=None):
