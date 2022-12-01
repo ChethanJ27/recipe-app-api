@@ -170,3 +170,9 @@ SIMPLE_JWT = {
 }
 
 AUTH_USER_MODEL = 'user.UserModel'
+
+CELERY_BROKER_URL = 'redis://redis:6379'
+
+REDIS_LOCK_HOST = 'redis'
+REDIS_LOCK_PORT = 6379
+REDIS_LOCK_DB = 0

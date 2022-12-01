@@ -51,3 +51,19 @@ services:
       - 80:80
     depends_on: 
       - backend
+
+  # message broker
+  redis:
+    restart: always
+    image: redis:latest
+    expose:
+      - "6379"
+
+  celery_worker:
+    build:
+      context: .
+    command: celery -A app worker -l DEBUG
+    depends_on:
+      - backend
+      - redis
+      - mysql

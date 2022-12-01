@@ -3,3 +3,8 @@ djangorestframework==3.14.0
 mysqlclient==2.1.1
 mysql-connector
 djangorestframework-simplejwt
+#celery
+celery
+# Redis support
+redis
+django-redis==5.2.0
