@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.response import  Response
 from rest_framework.permissions import IsAuthenticated
 from .utils import get_tokens_for_user,add_token_to_blackList
-from .tasks import create_task,debug_task
+from .tasks import send_verification_mail
 
 from user.serializers import UserSerializers
 
@@ -19,7 +19,7 @@ class CreateUserView(generics.CreateAPIView):
 
     def create(self, request,*args,**kwargs):
         result = super(CreateUserView, self).create(request, *args, **kwargs)
-        create_task.delay(1)
+        send_verification_mail.delay(username=request.data["name"],email=request.data["email"])
         return result
     
 

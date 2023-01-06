@@ -1,6 +1,7 @@
 from __future__ import absolute_import, unicode_literals
 import time
 from celery import shared_task
+from .utils import sendVerificationMail
 
 
 @shared_task
@@ -15,7 +16,7 @@ def create_task(task_type):
     return True
 
 @shared_task
-def send_verification_mail():
+def send_verification_mail(username,email):
     """sending verification email logic will come here"""
-    time.sleep(10)
+    sendVerificationMail(username=username,email=email)
     return True

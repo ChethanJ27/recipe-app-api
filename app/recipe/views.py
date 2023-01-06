@@ -70,7 +70,10 @@ class RecipeView(APIView):
         return Response({"msg":model.title},status=status.HTTP_200_OK)
 
     def get(self,request):
-        model = Recipe.objects.all()
+        id = self.request.query_params.get('id',0)
+        logging.debug(id)
+        query = 'SELECT * from recipe_recipe limit %s ,5' %id
+        model = Recipe.objects.raw(query)
         serializer = RecipeSerializer(model,many=True)
         return Response({'data':serializer.data},status=status.HTTP_200_OK)
 
