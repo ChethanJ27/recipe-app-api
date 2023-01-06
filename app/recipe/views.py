@@ -6,8 +6,15 @@ from rest_framework.permissions import IsAuthenticated
 from recipe.serializers import TagSerializer,IngredientSerializer,RecipeSerializer
 from recipe.models import Tag,Ingredient,Recipe
 import json,logging
+from rest_framework.pagination import CursorPagination
 
 # Create your views here.
+
+
+# class CursorSetPagination(CursorPagination):
+#     page_size = 5
+#     page_size_query_param = 'page_size'
+#     ordering = 'title'
 
 class TagView(APIView):
 
@@ -49,6 +56,7 @@ class IngredientView(APIView):
 class RecipeView(APIView):
 
     permission_classes = [IsAuthenticated, ]
+    # pagination_class = CursorSetPagination
 
     def post(self,request):
         data = request.data
@@ -73,9 +81,17 @@ class RecipeView(APIView):
         id = self.request.query_params.get('id',0)
         logging.debug(id)
         query = 'SELECT * from recipe_recipe where id > %s limit 10 ' %id 
-        model = Recipe.objects.raw(query)
-        serializer = RecipeSerializer(model,many=True)
-        return Response({'data':serializer.data},status=status.HTTP_200_OK)
+        queryset = Recipe.objects.raw(query)
+        # queryset = Recipe.objects.all()
+        # paginator = CursorSetPagination()
+        # page = paginator.paginate_queryset(queryset, request)
+        # if page is not None:
+        #     serializer = RecipeSerializer(page, many=True)
+        #     return Response({'data':serializer.data}, status=status.HTTP_200_OK)
+
+        serializer = RecipeSerializer(queryset,many=True)
+        # 'id' field should be hashed before sending the response 
+        return Response({'data':serializer.data,'id':id},status=status.HTTP_200_OK)
 
 class SearchRecipe(generics.ListAPIView):
     """return recipes by its recipe name"""
