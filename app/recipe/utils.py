@@ -3,6 +3,12 @@ from recipe.models import Tag
 
 from recipe.models import Ingredient
 
+class CursorModelPagination():
+
+    def get_paginated_data(self,model,cursor,ordering_param,page_size):
+        results = model.objects.filter(id__gt=cursor).order_by(ordering_param)[:page_size]
+        return results
+
 def get_or_create_ingredients(ingredients,user):
     newingredients = []
     for ingredient in ingredients:

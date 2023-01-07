@@ -6,15 +6,9 @@ from rest_framework.permissions import IsAuthenticated
 from recipe.serializers import TagSerializer,IngredientSerializer,RecipeSerializer
 from recipe.models import Tag,Ingredient,Recipe
 import json,logging
-from rest_framework.pagination import CursorPagination
+from .utils import CursorModelPagination
 
 # Create your views here.
-
-
-# class CursorSetPagination(CursorPagination):
-#     page_size = 5
-#     page_size_query_param = 'page_size'
-#     ordering = 'title'
 
 class TagView(APIView):
 
@@ -80,15 +74,10 @@ class RecipeView(APIView):
     def get(self,request):
         id = self.request.query_params.get('id',0)
         logging.debug(id)
-        query = 'SELECT * from recipe_recipe where id > %s limit 10 ' %id 
-        queryset = Recipe.objects.raw(query)
-        # queryset = Recipe.objects.all()
-        # paginator = CursorSetPagination()
-        # page = paginator.paginate_queryset(queryset, request)
-        # if page is not None:
-        #     serializer = RecipeSerializer(page, many=True)
-        #     return Response({'data':serializer.data}, status=status.HTTP_200_OK)
-
+        # query = 'SELECT * from recipe_recipe where id > %s limit 10 ' %id 
+        # queryset = Recipe.objects.raw(query)
+        paginator = CursorModelPagination()
+        queryset = paginator.get_paginated_data(model=Recipe,cursor=id,ordering_param='id',page_size=5)
         serializer = RecipeSerializer(queryset,many=True)
         # 'id' field should be hashed before sending the response 
         return Response({'data':serializer.data,'id':id},status=status.HTTP_200_OK)
