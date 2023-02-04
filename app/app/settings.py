@@ -180,6 +180,12 @@ SIMPLE_JWT = {
 AUTH_USER_MODEL = 'user.UserModel'
 
 CELERY_BROKER_URL = 'redis://redis:6379'
+CELERY_BEAT_SCHEDULE = {
+    'clean_up_deleted_data': {
+        'task': 'recipe.tasks.clean_up_deleted_data',
+        'schedule': 30.0,
+    },
+}
 
 REDIS_LOCK_HOST = 'redis'
 REDIS_LOCK_PORT = 6379

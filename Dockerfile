@@ -1,4 +1,4 @@
-FROM python:3.10.7-slim-buster
+FROM python:latest
 
 ENV PYTHONUNBUFFERED 1
 
@@ -14,6 +14,8 @@ RUN pip install -r /requirements.txt
 RUN mkdir /app
 WORKDIR /app
 COPY ./app /app
+
+RUN chmod 666 /app/app/settings/celerybeat-schedule
 
 RUN adduser user
 USER user

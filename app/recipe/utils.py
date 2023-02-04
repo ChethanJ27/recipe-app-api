@@ -1,6 +1,6 @@
 import logging
 from recipe.models import Tag
-
+from recipe.models import Recipe
 from recipe.models import Ingredient
 
 class CursorModelPagination():

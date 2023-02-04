@@ -15,14 +15,21 @@ class TagView(APIView):
     permission_classes = [IsAuthenticated, ]
 
     def post(self, request):
+        if 'tag/delete' in request.path:
+            return self.deleteTag(request=request)
         user = self.request.user
         print(user)
         tag = Tag(name=request.POST['name'],user=user)
         tag.save()
         return Response({'msg': tag.name}, status=status.HTTP_200_OK)
+    
+    def deleteTag(self,request):
+        id = request.data["id"]
+        Tag.objects.filter(id=id).update(is_deleted=True)
+        return Response({'msg':'Successfully deleted'},status=status.HTTP_200_OK)
 
     def get(self,request):
-        tags = Tag.objects.all()
+        tags = Tag.objects.all().filter(is_deleted=False)
         searializer = TagSerializer(tags,many=True)
         return Response({'msg': searializer.data}, status=status.HTTP_200_OK)
 
@@ -37,6 +44,8 @@ class IngredientView(APIView):
     permission_classes = [IsAuthenticated, ]
 
     def post(self,request):
+        if 'ingredient/delete' in request.path:
+            return self.deleteIngredient(request=request)
         user = request.user
         model = Ingredient(name=request.POST['name'],user=user)
         model.save()
@@ -46,6 +55,11 @@ class IngredientView(APIView):
         model = Ingredient.objects.all()
         serializer = IngredientSerializer(model,many = True)
         return Response({'data':serializer.data},status=status.HTTP_200_OK)
+    
+    def deleteIngredient(self,request):
+        id = request.data["id"]
+        Ingredient.objects.filter(id=id).update(is_deleted=True)
+        return Response({"msg":"Successfully deleted"},status=status.HTTP_200_OK)
 
 class RecipeView(APIView):
 
@@ -53,6 +67,8 @@ class RecipeView(APIView):
     # pagination_class = CursorSetPagination
 
     def post(self,request):
+        if '/recipe/delete' in request.path:
+            return self.deleteRecipe(request=request)
         data = request.data
         data["user"] = request.user
         tags = request.data["tags"]
@@ -81,6 +97,12 @@ class RecipeView(APIView):
         serializer = RecipeSerializer(queryset,many=True)
         # 'id' field should be hashed before sending the response 
         return Response({'data':serializer.data,'id':id},status=status.HTTP_200_OK)
+    
+    def deleteRecipe(self,request):
+        id = request.data["id"]
+        Recipe.objects.filter(id=id).update(is_deleted=True)
+        return Response({"msg":"Successfully deleted"},status=status.HTTP_200_OK)
+
 
 class SearchRecipe(generics.ListAPIView):
     """return recipes by its recipe name"""
