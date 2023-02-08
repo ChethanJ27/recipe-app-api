@@ -1,10 +1,17 @@
 from __future__ import absolute_import, unicode_literals
 from celery import shared_task
 from recipe.models import Recipe,Tag,Ingredient
+import logging
 
+
+logger = logging.getLogger("tasks")
 
 @shared_task
-def clean_up_deleted_data():
-    Recipe.objects.filter(is_Deleted=True).delete()
-    Tag.objects.filter(is_Deleted=True).delete()
-    Ingredient.objects.filter(is_Deleted=True).delete()
+def delete_recipes():
+    try:
+        Recipe.objects.filter(is_deleted=True).delete()
+        result = Tag.objects.filter(is_deleted=True).delete()
+        logger.info(result)
+        Ingredient.objects.filter(is_deleted=True).delete()
+    except Exception as e:
+        logger.error(e)

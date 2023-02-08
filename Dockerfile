@@ -15,7 +15,6 @@ RUN mkdir /app
 WORKDIR /app
 COPY ./app /app
 
-RUN chmod 666 /app/app/settings/celerybeat-schedule
 
 RUN adduser user
 USER user

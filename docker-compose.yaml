@@ -61,7 +61,7 @@ services:
   celery_worker:
     build:
       context: .
-    command: celery -A app beat -l DEBUG
+    command: celery -A app beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
     depends_on:
       - backend
       - redis
