@@ -193,7 +193,7 @@ CELERY_BEAT_SCHEDULE = {
     },
     "delete_users": {
         "task": "user.tasks.cleanup_deleted_users",
-        "schedule": crontab(hour="0"),
+        "schedule": crontab(minute="*/2"),
     }
 }
 
