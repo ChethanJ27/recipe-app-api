@@ -14,7 +14,6 @@ import datetime
 import os
 from pathlib import Path
 from celery.schedules import crontab
-import recipe.tasks
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -190,6 +189,10 @@ CELERY_RESULT_BACKEND = "redis://redis:6379"
 CELERY_BEAT_SCHEDULE = {
     "delete_recipes": {
         "task": "recipe.tasks.delete_recipes",
+        "schedule": crontab(hour="0"),
+    },
+    "delete_users": {
+        "task": "user.tasks.cleanup_deleted_users",
         "schedule": crontab(hour="0"),
     }
 }

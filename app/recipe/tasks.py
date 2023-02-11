@@ -4,7 +4,7 @@ from recipe.models import Recipe,Tag,Ingredient
 import logging
 
 
-logger = logging.getLogger("tasks")
+logger = logging.getLogger("recipe_tasks")
 
 @shared_task
 def delete_recipes():
