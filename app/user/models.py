@@ -1,7 +1,6 @@
 
 from django.db import models
 from django.contrib.auth.models import BaseUserManager,AbstractBaseUser
-from .tasks import create_task
 from django.contrib.auth.models import PermissionsMixin
 
 class UserManager(BaseUserManager):
@@ -16,7 +15,6 @@ class UserManager(BaseUserManager):
         user = self.model(email)
         user.set_password(password)
         user.save(using=self._db)
-        create_task.delay(1)
         return user
 
     def create_superuser(self, email, name, password=None):
@@ -42,6 +40,7 @@ class UserModel(AbstractBaseUser,PermissionsMixin):
     is_admin = models.BooleanField(default=False)
     objects = UserManager()
     is_staff = models.BooleanField(default=False)
+    is_deleted = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['name']

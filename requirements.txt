@@ -5,6 +5,7 @@ mysql-connector
 djangorestframework-simplejwt
 #celery
 celery
+django-celery-beat
 # Redis support
 redis
 django-redis==5.2.0

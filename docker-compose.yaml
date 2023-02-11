@@ -46,7 +46,6 @@ services:
   #nginx
   proxy:
     build: proxy
-    restart: always
     ports:
       - 80:80
     depends_on: 
@@ -62,7 +61,7 @@ services:
   celery_worker:
     build:
       context: .
-    command: celery -A app worker -l DEBUG
+    command: celery -A app beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
     depends_on:
       - backend
       - redis

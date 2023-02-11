@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 import datetime
 import os
 from pathlib import Path
+from celery.schedules import crontab
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'user',
     'recipe',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
@@ -132,7 +134,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = "chethantony42@gmail.com"
-EMAIL_HOST_PASSWORD = "FuckOff"
+EMAIL_HOST_PASSWORD = "?..."
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
@@ -179,7 +181,21 @@ SIMPLE_JWT = {
 
 AUTH_USER_MODEL = 'user.UserModel'
 
-CELERY_BROKER_URL = 'redis://redis:6379'
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers.DatabaseScheduler'
+
+
+CELERY_BROKER_URL = "redis://redis:6379"
+CELERY_RESULT_BACKEND = "redis://redis:6379"
+CELERY_BEAT_SCHEDULE = {
+    "delete_recipes": {
+        "task": "recipe.tasks.delete_recipes",
+        "schedule": crontab(hour="0"),
+    },
+    "delete_users": {
+        "task": "user.tasks.cleanup_deleted_users",
+        "schedule": crontab(minute="*/2"),
+    }
+}
 
 REDIS_LOCK_HOST = 'redis'
 REDIS_LOCK_PORT = 6379
