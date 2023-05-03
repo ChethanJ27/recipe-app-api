@@ -1,7 +1,8 @@
 # recipe-app-api
 Basic Django-Rest-Framework CRUD project
+  - Designed and implemented a scalable RESTful API project using Django Rest Framework, with Docker containerization for improved portability and flexibility.
+  - Incorporated JWT Authentication using simple jwt framework.
   - Nginx is used as a reverse proxy and as a Load balancer.
-  - Dockerized project.
   - Provides Login/Registration and Refresh Token endpoints with JWT Token Authentication.
   - Provides CRUD Api to create Recipes.
   - Sends a verfication email on registration using celery task.
